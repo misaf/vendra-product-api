@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Misaf\VendraProductApi\JsonApi\V1;
+
+use LaravelJsonApi\Core\Server\Server as BaseServer;
+use Misaf\VendraMultimediaApi\JsonApi\V1\Multimedia\MultimediaSchema;
+use Misaf\VendraProductApi\JsonApi\V1\ProductCategories\ProductCategorySchema;
+use Misaf\VendraProductApi\JsonApi\V1\ProductPrices\ProductPriceSchema;
+use Misaf\VendraProductApi\JsonApi\V1\Products\ProductSchema;
+
+final class Server extends BaseServer
+{
+    protected string $baseUri = '/api/v1';
+
+    public function authorizable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return list<class-string>
+     */
+    public function allSchemas(): array
+    {
+        return [
+            ProductCategorySchema::class,
+            ProductSchema::class,
+            ProductPriceSchema::class,
+            MultimediaSchema::class,
+        ];
+    }
+}
