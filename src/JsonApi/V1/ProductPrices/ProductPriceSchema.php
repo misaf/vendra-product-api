@@ -4,26 +4,24 @@ declare(strict_types=1);
 
 namespace Misaf\VendraProductApi\JsonApi\V1\ProductPrices;
 
-use LaravelJsonApi\Eloquent\Fields\ArrayHash;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\ID;
+use LaravelJsonApi\Eloquent\Fields\Number;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsTo;
-use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
+use LaravelJsonApi\Eloquent\Fields\Str;
+use LaravelJsonApi\Eloquent\Filters\Has;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereDoesntHave;
 use LaravelJsonApi\Eloquent\Filters\WhereHas;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Filters\WhereIdNotIn;
-use LaravelJsonApi\Eloquent\Filters\WhereIn;
-use LaravelJsonApi\Eloquent\Filters\WhereNotIn;
-use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Schema;
-use Misaf\VendraProduct\Models\ProductPrice as ModelsProductPrice;
+use Misaf\VendraProduct\Models\ProductPrice;
 
 final class ProductPriceSchema extends Schema
 {
-    public static string $model = ModelsProductPrice::class;
+    public static string $model = ProductPrice::class;
 
     protected ?array $defaultPagination = ['number' => 1];
 
@@ -31,16 +29,24 @@ final class ProductPriceSchema extends Schema
     {
         return [
             ID::make(),
-            ArrayHash::make('price'),
+
+            Str::make('currency_code'),
+
+            Number::make('price')
+                ->sortable(),
+
             DateTime::make('created_at')
                 ->sortable()
                 ->readOnly(),
+
             DateTime::make('updated_at')
                 ->sortable()
                 ->readOnly(),
+
             BelongsTo::make('product')
                 ->readOnly(),
-            BelongsTo::make('currency')
+
+            BelongsTo::make('productCategory')
                 ->readOnly(),
         ];
     }
@@ -48,28 +54,66 @@ final class ProductPriceSchema extends Schema
     public function filters(): array
     {
         return [
+            ...$this->getPrimaryKeyFilters(),
+            ...$this->getAttributeFilters(),
+            ...$this->getRelationFilters(),
+        ];
+    }
+
+    private function getPrimaryKeyFilters(): array
+    {
+        return [
             WhereIdIn::make($this),
             WhereIdNotIn::make($this, 'exclude'),
-            Where::make('product', 'product_id'),
-            Where::make('currency', 'currency_id'),
+        ];
+    }
+
+    private function getAttributeFilters(): array
+    {
+        return [
+            Where::make('currency_code'),
+
+            Where::make('price')
+                ->asInteger(),
+
+            Where::make('gt-price', 'price')
+                ->asInteger()
+                ->gt(),
+
+            Where::make('gte-price', 'price')
+                ->asInteger()
+                ->gte(),
+
+            Where::make('lt-price', 'price')
+                ->asInteger()
+                ->lt(),
+
+            Where::make('lte-price', 'price')
+                ->asInteger()
+                ->lte(),
+        ];
+    }
+
+    private function getRelationFilters(): array
+    {
+        return [
             WhereHas::make($this, 'product', 'with-product'),
             WhereDoesntHave::make($this, 'product', 'without-product'),
-            WhereIn::make('in-product', 'product_id'),
-            WhereNotIn::make('not-in-product', 'product_id'),
-            WhereHas::make($this, 'currency', 'with-currency'),
-            WhereDoesntHave::make($this, 'currency', 'without-currency'),
-            WhereIn::make('in-currency', 'currency_id'),
-            WhereNotIn::make('not-in-currency', 'currency_id'),
-            WithTrashed::make('with-trashed'),
-            OnlyTrashed::make('trashed'),
+
+            WhereHas::make($this, 'productCategory', 'with-product-category'),
+            WhereDoesntHave::make($this, 'productCategory', 'without-product-category'),
+
+            Has::make($this, 'multimedia', 'has-multimedia'),
+            WhereHas::make($this, 'multimedia', 'with-multimedia'),
+            WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
         ];
     }
 
     public function includePaths(): iterable
     {
         return [
-            'currency',
             'product',
+            'productCategory',
         ];
     }
 

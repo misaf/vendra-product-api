@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Misaf\VendraProductApi\JsonApi\V1\Products;
 
+use LaravelJsonApi\Eloquent\Fields\ArrayHash;
 use LaravelJsonApi\Eloquent\Fields\Boolean;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\ID;
@@ -14,18 +15,13 @@ use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
 use LaravelJsonApi\Eloquent\Fields\Relations\HasOne;
 use LaravelJsonApi\Eloquent\Fields\Str;
 use LaravelJsonApi\Eloquent\Filters\Has;
-use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereDoesntHave;
 use LaravelJsonApi\Eloquent\Filters\WhereHas;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Filters\WhereIdNotIn;
-use LaravelJsonApi\Eloquent\Filters\WhereIn;
-use LaravelJsonApi\Eloquent\Filters\WhereNotIn;
-use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Schema;
-use Misaf\VendraApi\JsonApi\Filters\WhereHasInFilter;
 use Misaf\VendraApi\JsonApi\Sorting\RandomPositionSort;
 use Misaf\VendraProduct\Models\Product;
 
@@ -39,35 +35,56 @@ final class ProductSchema extends Schema
     {
         return [
             ID::make(),
-            Str::make('name'),
-            Str::make('description'),
-            Str::make('slug'),
-            Number::make('token')
+
+            ArrayHash::make('name'),
+
+            ArrayHash::make('description'),
+
+            ArrayHash::make('slug'),
+
+            Str::make('token')
                 ->readOnly(),
-            Number::make('quantity'),
-            Number::make('stock_threshold'),
-            Boolean::make('in_stock'),
+
+            Number::make('quantity')
+                ->sortable(),
+
+            Number::make('stock_threshold')
+                ->sortable(),
+
+            Boolean::make('in_stock')
+                ->sortable(),
+
             Number::make('position')
                 ->sortable()
                 ->readOnly(),
-            DateTime::make('available_soon')
+
+            Boolean::make('available_soon')
                 ->sortable(),
-            DateTime::make('availability_date')
-                ->sortable(),
+
+            DateTime::make('availability_date'),
+
             DateTime::make('created_at')
                 ->sortable()
                 ->readOnly(),
+
             DateTime::make('updated_at')
                 ->sortable()
                 ->readOnly(),
-            HasOne::make('latestProductPrice')
-                ->readOnly()
-                ->type('product-prices'),
-            BelongsToMany::make('multimedia')
-                ->readOnly(),
+
             BelongsTo::make('productCategory')
                 ->readOnly(),
+
             HasMany::make('productPrices')
+                ->readOnly(),
+
+            HasOne::make('latestProductPrice')
+                ->type('product-prices')
+                ->readOnly(),
+
+            HasOne::make('oldestProductPrice')
+                ->readOnly(),
+
+            BelongsToMany::make('multimedia')
                 ->readOnly(),
         ];
     }
@@ -75,67 +92,105 @@ final class ProductSchema extends Schema
     public function filters(): array
     {
         return [
+            ...$this->getPrimaryKeyFilters(),
+            ...$this->getAttributeFilters(),
+            ...$this->getRelationFilters(),
+        ];
+    }
+
+    private function getPrimaryKeyFilters(): array
+    {
+        return [
             WhereIdIn::make($this),
             WhereIdNotIn::make($this, 'exclude'),
-            Where::make('product-category', 'product_category_id'),
-            Where::make('search', 'name->fa')
-                ->using('like'),
-            Where::make('slug', 'slug->fa')
+        ];
+    }
+
+    private function getAttributeFilters(): array
+    {
+        return [
+            Where::make('slug')
                 ->singular(),
-            WhereIn::make('in-slug', 'slug->fa'),
-            WhereNotIn::make('not-in-slug', 'slug->fa'),
+
             Where::make('token')
                 ->singular(),
-            WhereIn::make('in-token', 'token'),
-            WhereNotIn::make('not-in-token', 'token'),
-            Where::make('quantity'),
+
+            Where::make('quantity')
+                ->asInteger(),
+
             Where::make('gt-quantity', 'quantity')
+                ->asInteger()
                 ->gt(),
+
             Where::make('gte-quantity', 'quantity')
+                ->asInteger()
                 ->gte(),
+
             Where::make('lt-quantity', 'quantity')
+                ->asInteger()
                 ->lt(),
+
             Where::make('lte-quantity', 'quantity')
+                ->asInteger()
                 ->lte(),
-            Where::make('stock-threshold'),
+
+            Where::make('stock_threshold')
+                ->asInteger(),
+
             Where::make('gt-stock-threshold', 'stock_threshold')
+                ->asInteger()
                 ->gt(),
+
             Where::make('gte-stock-threshold', 'stock_threshold')
+                ->asInteger()
                 ->gte(),
+
             Where::make('lt-stock-threshold', 'stock_threshold')
+                ->asInteger()
                 ->lt(),
+
             Where::make('lte-stock-threshold', 'stock_threshold')
+                ->asInteger()
                 ->lte(),
+
             Where::make('in_stock')
                 ->asBoolean(),
-            Where::make('available-soon')
+
+            Where::make('available_soon')
                 ->asBoolean(),
-            Where::make('availability-date'),
-            WhereHas::make($this, 'latestProductPrice', 'with-latest-product-price'),
-            WhereDoesntHave::make($this, 'latestProductPrice', 'without-latest-product-price'),
-            Has::make($this, 'multimedia', 'has-multimedia'),
-            WhereHas::make($this, 'multimedia', 'with-multimedia'),
-            WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
+        ];
+    }
+
+    private function getRelationFilters(): array
+    {
+        return [
             WhereHas::make($this, 'productCategory', 'with-product-category'),
-            WhereHasInFilter::make($this, 'productCategory', 'with-in-product-category', 'slug->fa')->delimiter(','),
             WhereDoesntHave::make($this, 'productCategory', 'without-product-category'),
-            WhereIn::make('in-product-category', 'product_category_id'),
-            WhereNotIn::make('not-in-product-category', 'product_category_id'),
+
             Has::make($this, 'productPrices', 'has-product-prices'),
             WhereHas::make($this, 'productPrices', 'with-product-prices'),
             WhereDoesntHave::make($this, 'productPrices', 'without-product-prices'),
-            WithTrashed::make('with-trashed'),
-            OnlyTrashed::make('trashed'),
+
+            WhereHas::make($this, 'latestProductPrice', 'with-latest-product-price'),
+            WhereDoesntHave::make($this, 'latestProductPrice', 'without-latest-product-price'),
+
+            WhereHas::make($this, 'oldestProductPrice', 'with-oldest-product-price'),
+            WhereDoesntHave::make($this, 'oldestProductPrice', 'without-oldest-product-price'),
+
+            Has::make($this, 'multimedia', 'has-multimedia'),
+            WhereHas::make($this, 'multimedia', 'with-multimedia'),
+            WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
         ];
     }
 
     public function includePaths(): iterable
     {
         return [
-            'latestProductPrice',
-            'multimedia',
             'productCategory',
             'productPrices',
+            'latestProductPrice',
+            'oldestProductPrice',
+            'multimedia',
         ];
     }
 

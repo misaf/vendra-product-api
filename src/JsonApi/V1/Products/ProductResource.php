@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Misaf\VendraProductApi\JsonApi\V1\Products;
 
-use App\Traits\LocalizableAttributesTrait;
 use LaravelJsonApi\Core\Resources\JsonApiResource;
 
 final class ProductResource extends JsonApiResource
 {
-    use LocalizableAttributesTrait;
-
     public function attributes($request): iterable
     {
         return [
@@ -32,10 +29,11 @@ final class ProductResource extends JsonApiResource
     public function relationships($request): iterable
     {
         return [
-            $this->relation('latestProductPrice'),
-            $this->relation('multimedia'),
             $this->relation('productCategory'),
             $this->relation('productPrices'),
+            $this->relation('latestProductPrice'),
+            $this->relation('oldestProductPrice'),
+            $this->relation('multimedia'),
         ];
     }
 }

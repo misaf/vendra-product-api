@@ -12,20 +12,19 @@ use LaravelJsonApi\Eloquent\Fields\Number;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsToMany;
 use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
 use LaravelJsonApi\Eloquent\Filters\Has;
-use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereDoesntHave;
 use LaravelJsonApi\Eloquent\Filters\WhereHas;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Filters\WhereIdNotIn;
-use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Schema;
-use Misaf\VendraProduct\Models\ProductCategory as ModelsProductCategory;
+use Misaf\VendraApi\JsonApi\Sorting\RandomPositionSort;
+use Misaf\VendraProduct\Models\ProductCategory;
 
 final class ProductCategorySchema extends Schema
 {
-    public static string $model = ModelsProductCategory::class;
+    public static string $model = ProductCategory::class;
 
     protected ?array $defaultPagination = ['number' => 1];
 
@@ -33,24 +32,35 @@ final class ProductCategorySchema extends Schema
     {
         return [
             ID::make(),
+
             ArrayHash::make('name'),
+
             ArrayHash::make('description'),
+
             ArrayHash::make('slug'),
+
             Number::make('position')
                 ->sortable()
                 ->readOnly(),
-            Boolean::make('status'),
+
+            Boolean::make('status')
+                ->sortable(),
+
             DateTime::make('created_at')
                 ->sortable()
                 ->readOnly(),
+
             DateTime::make('updated_at')
                 ->sortable()
                 ->readOnly(),
+
+            HasMany::make('products')
+                ->readOnly(),
+
             HasMany::make('productPrices')
                 ->readOnly(),
+
             BelongsToMany::make('multimedia')
-                ->readOnly(),
-            HasMany::make('products')
                 ->readOnly(),
         ];
     }
@@ -58,39 +68,66 @@ final class ProductCategorySchema extends Schema
     public function filters(): array
     {
         return [
+            ...$this->getPrimaryKeyFilters(),
+            ...$this->getAttributeFilters(),
+            ...$this->getRelationFilters(),
+        ];
+    }
+
+    private function getPrimaryKeyFilters(): array
+    {
+        return [
             WhereIdIn::make($this),
             WhereIdNotIn::make($this, 'exclude'),
-            Where::make('slug', 'slug->fa')
+        ];
+    }
+
+    private function getAttributeFilters(): array
+    {
+        return [
+            Where::make('slug')
                 ->singular(),
+
             Where::make('status')
                 ->asBoolean(),
-            Has::make($this, 'productPrices', 'has-product-prices'),
-            WhereHas::make($this, 'productPrices', 'with-product-prices'),
-            WhereDoesntHave::make($this, 'productPrices', 'without-product-prices'),
-            Has::make($this, 'multimedia', 'has-multimedia'),
-            WhereHas::make($this, 'multimedia', 'with-multimedia'),
-            WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
+        ];
+    }
+
+    private function getRelationFilters(): array
+    {
+        return [
             Has::make($this, 'products', 'has-products'),
             WhereHas::make($this, 'products', 'with-products'),
             WhereDoesntHave::make($this, 'products', 'without-products'),
-            WithTrashed::make('with-trashed'),
-            OnlyTrashed::make('trashed'),
+
+            Has::make($this, 'productPrices', 'has-product-prices'),
+            WhereHas::make($this, 'productPrices', 'with-product-prices'),
+            WhereDoesntHave::make($this, 'productPrices', 'without-product-prices'),
+
+            Has::make($this, 'multimedia', 'has-multimedia'),
+            WhereHas::make($this, 'multimedia', 'with-multimedia'),
+            WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
         ];
     }
 
     public function includePaths(): iterable
     {
         return [
-            'multimedia',
-            'productPrices',
-            'products.latestProductPrice',
-            'products.multimedia',
             'products',
+            'productPrices',
+            'multimedia',
         ];
     }
 
     public function pagination(): PagePagination
     {
         return PagePagination::make();
+    }
+
+    public function sortables(): iterable
+    {
+        return [
+            RandomPositionSort::make('random-position'),
+        ];
     }
 }

@@ -31,7 +31,6 @@ Route::middleware('api')->group(function (): void {
             ->readOnly()
             ->relationships(function (Relationships $relations): void {
                 $relations->hasOne('product')->readOnly();
-                $relations->hasOne('currency')->readOnly();
             });
     });
 });

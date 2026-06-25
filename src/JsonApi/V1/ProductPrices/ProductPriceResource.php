@@ -11,17 +11,18 @@ final class ProductPriceResource extends JsonApiResource
     public function attributes($request): iterable
     {
         return [
-            'price'      => $this->price,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'currency_code' => $this->currency_code,
+            'price'         => $this->price,
+            'created_at'    => $this->created_at,
+            'updated_at'    => $this->updated_at,
         ];
     }
 
     public function relationships($request): iterable
     {
         return [
-            $this->relation('currency'),
             $this->relation('product'),
+            $this->relation('productCategory'),
         ];
     }
 }
