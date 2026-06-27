@@ -12,7 +12,8 @@ final class ProductApiServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
-        $package->name('vendra-product-api');
+        $package->name('vendra-product-api')
+            ->hasRoute('api');
     }
 
     public function packageBooted(): void
