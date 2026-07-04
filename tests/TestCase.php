@@ -8,17 +8,16 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Http;
 use LaravelJsonApi\Encoder\Neomerx\ServiceProvider as LaravelJsonApiEncoderServiceProvider;
 use LaravelJsonApi\Laravel\ServiceProvider as LaravelJsonApiServiceProvider;
-use LaravelJsonApi\Testing\MakesJsonApiRequests;
-use Misaf\VendraFaq\Providers\FaqServiceProvider;
-use Misaf\VendraFaqApi\JsonApi\VendraFaq\Server as VendraFaqServer;
-use Misaf\VendraFaqApi\Providers\FaqApiServiceProvider;
+use Misaf\VendraApi\Providers\ApiServiceProvider;
+use Misaf\VendraMultimediaApi\JsonApi\V1\Server as VendraMultimediaServer;
+use Misaf\VendraMultimediaApi\Providers\MultimediaApiServiceProvider;
+use Misaf\VendraProductApi\JsonApi\V1\Server as VendraProductServer;
+use Misaf\VendraProductApi\Providers\ProductApiServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Override;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    use MakesJsonApiRequests;
-
     #[Override]
     protected function setUp(): void
     {
@@ -42,7 +41,8 @@ abstract class TestCase extends OrchestraTestCase
         ]);
         $app['config']->set('eloquent-sortable.order_column_name', 'position');
         $app['config']->set('jsonapi.namespace', 'JsonApi');
-        $app['config']->set('jsonapi.servers.vendra-faq', VendraFaqServer::class);
+        $app['config']->set('jsonapi.servers.vendra-multimedia', VendraMultimediaServer::class);
+        $app['config']->set('jsonapi.servers.vendra-product', VendraProductServer::class);
     }
 
     #[Override]
@@ -61,14 +61,9 @@ abstract class TestCase extends OrchestraTestCase
         return [
             LaravelJsonApiEncoderServiceProvider::class,
             LaravelJsonApiServiceProvider::class,
-            FaqServiceProvider::class,
-            FaqApiServiceProvider::class,
+            ApiServiceProvider::class,
+            MultimediaApiServiceProvider::class,
+            ProductApiServiceProvider::class,
         ];
-    }
-
-    #[Override]
-    protected function defineDatabaseMigrations(): void
-    {
-        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
 }

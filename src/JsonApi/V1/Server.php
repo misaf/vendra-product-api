@@ -12,7 +12,7 @@ use Misaf\VendraProductApi\JsonApi\V1\Products\ProductSchema;
 
 final class Server extends BaseServer
 {
-    protected string $baseUri = '/api/v1';
+    protected string $baseUri = '/v1';
 
     public function authorizable(): bool
     {
