@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Misaf\VendraProductApi\JsonApi\V1\ProductCategories;
 
+use LaravelJsonApi\Contracts\Schema\Field;
+use LaravelJsonApi\Contracts\Schema\Filter;
+use LaravelJsonApi\Contracts\Schema\Sortable;
 use LaravelJsonApi\Eloquent\Fields\ArrayHash;
 use LaravelJsonApi\Eloquent\Fields\Boolean;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
@@ -26,8 +29,14 @@ final class ProductCategorySchema extends Schema
 {
     public static string $model = ProductCategory::class;
 
+    /**
+     * @var array<string, int>|null
+     */
     protected ?array $defaultPagination = ['number' => 1];
 
+    /**
+     * @return array<int, Field>
+     */
     public function fields(): array
     {
         return [
@@ -65,6 +74,9 @@ final class ProductCategorySchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     public function filters(): array
     {
         return [
@@ -74,6 +86,9 @@ final class ProductCategorySchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getPrimaryKeyFilters(): array
     {
         return [
@@ -82,6 +97,9 @@ final class ProductCategorySchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getAttributeFilters(): array
     {
         $locale = app()->getLocale();
@@ -100,6 +118,9 @@ final class ProductCategorySchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getRelationFilters(): array
     {
         return [
@@ -117,6 +138,9 @@ final class ProductCategorySchema extends Schema
         ];
     }
 
+    /**
+     * @return iterable<int, string>
+     */
     public function includePaths(): iterable
     {
         return [
@@ -131,6 +155,9 @@ final class ProductCategorySchema extends Schema
         return PagePagination::make();
     }
 
+    /**
+     * @return iterable<int, Sortable>
+     */
     public function sortables(): iterable
     {
         return [
