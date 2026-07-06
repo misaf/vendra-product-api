@@ -26,7 +26,7 @@
 		"php": "^8.3",
 		"illuminate/support": "^13.0",
 		"misaf/vendra-api": "^1.0.0",
-		"misaf/vendra-multimedia-api": "dev-master",
+		"misaf/vendra-multimedia-api": "^1.0.0",
 		"misaf/vendra-product": "dev-master",
 		"spatie/laravel-package-tools": "^1.0"
 	},

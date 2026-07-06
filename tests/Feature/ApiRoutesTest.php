@@ -3,9 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use Misaf\VendraProductApi\Tests\TestCase;
-
-pest()->extend(TestCase::class);
 
 it('registers product api read routes', function (): void {
     expect(Route::has('vendra-product.products.index'))->toBeTrue()

@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace Misaf\VendraProductApi\JsonApi\V1\ProductCategories;
 
 use LaravelJsonApi\Core\Resources\JsonApiResource;
+use Misaf\VendraProduct\Models\ProductCategory;
 
+/**
+ * @mixin ProductCategory
+ */
 final class ProductCategoryResource extends JsonApiResource
 {
+    /**
+     * @return iterable<string, mixed>
+     */
     public function attributes($request): iterable
     {
         return [
@@ -21,6 +28,9 @@ final class ProductCategoryResource extends JsonApiResource
         ];
     }
 
+    /**
+     * @return iterable<int, mixed>
+     */
     public function relationships($request): iterable
     {
         return [

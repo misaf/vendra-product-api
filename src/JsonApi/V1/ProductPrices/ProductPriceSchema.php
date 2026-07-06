@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Misaf\VendraProductApi\JsonApi\V1\ProductPrices;
 
+use LaravelJsonApi\Contracts\Schema\Field;
+use LaravelJsonApi\Contracts\Schema\Filter;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\ID;
 use LaravelJsonApi\Eloquent\Fields\Number;
@@ -23,8 +25,14 @@ final class ProductPriceSchema extends Schema
 {
     public static string $model = ProductPrice::class;
 
+    /**
+     * @var array<string, int>|null
+     */
     protected ?array $defaultPagination = ['number' => 1];
 
+    /**
+     * @return array<int, Field>
+     */
     public function fields(): array
     {
         return [
@@ -51,6 +59,9 @@ final class ProductPriceSchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     public function filters(): array
     {
         return [
@@ -60,6 +71,9 @@ final class ProductPriceSchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getPrimaryKeyFilters(): array
     {
         return [
@@ -68,6 +82,9 @@ final class ProductPriceSchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getAttributeFilters(): array
     {
         return [
@@ -94,6 +111,9 @@ final class ProductPriceSchema extends Schema
         ];
     }
 
+    /**
+     * @return array<int, Filter>
+     */
     private function getRelationFilters(): array
     {
         return [
@@ -109,6 +129,9 @@ final class ProductPriceSchema extends Schema
         ];
     }
 
+    /**
+     * @return iterable<int, string>
+     */
     public function includePaths(): iterable
     {
         return [
