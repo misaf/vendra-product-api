@@ -9,6 +9,7 @@ use Misaf\VendraProduct\Models\Product;
 
 /**
  * @mixin Product
+ * @property list<array{name: string, value: string, unit?: string|null}>|null $specifications
  */
 final class ProductResource extends JsonApiResource
 {
