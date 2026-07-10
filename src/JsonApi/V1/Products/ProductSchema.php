@@ -8,6 +8,7 @@ use LaravelJsonApi\Contracts\Schema\Field;
 use LaravelJsonApi\Contracts\Schema\Filter;
 use LaravelJsonApi\Contracts\Schema\Sortable;
 use LaravelJsonApi\Eloquent\Fields\ArrayHash;
+use LaravelJsonApi\Eloquent\Fields\ArrayList;
 use LaravelJsonApi\Eloquent\Fields\Boolean;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\ID;
@@ -18,11 +19,13 @@ use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
 use LaravelJsonApi\Eloquent\Fields\Relations\HasOne;
 use LaravelJsonApi\Eloquent\Fields\Str;
 use LaravelJsonApi\Eloquent\Filters\Has;
+use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereDoesntHave;
 use LaravelJsonApi\Eloquent\Filters\WhereHas;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Filters\WhereIdNotIn;
+use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Schema;
 use Misaf\VendraApi\JsonApi\Sorting\RandomPositionSort;
@@ -48,6 +51,8 @@ final class ProductSchema extends Schema
             ArrayHash::make('name'),
 
             ArrayHash::make('description'),
+
+            ArrayList::make('specifications'),
 
             ArrayHash::make('slug'),
 
@@ -91,6 +96,7 @@ final class ProductSchema extends Schema
                 ->readOnly(),
 
             HasOne::make('oldestProductPrice')
+                ->type('product-prices')
                 ->readOnly(),
 
             BelongsToMany::make('multimedia')
@@ -107,6 +113,7 @@ final class ProductSchema extends Schema
             ...$this->getPrimaryKeyFilters(),
             ...$this->getAttributeFilters(),
             ...$this->getRelationFilters(),
+            ...$this->getSoftDeleteFilters(),
         ];
     }
 
@@ -208,6 +215,17 @@ final class ProductSchema extends Schema
             Has::make($this, 'multimedia', 'has-multimedia'),
             WhereHas::make($this, 'multimedia', 'with-multimedia'),
             WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
+        ];
+    }
+
+    /**
+     * @return array<int, Filter>
+     */
+    private function getSoftDeleteFilters(): array
+    {
+        return [
+            WithTrashed::make('with-trashed'),
+            OnlyTrashed::make('only-trashed'),
         ];
     }
 

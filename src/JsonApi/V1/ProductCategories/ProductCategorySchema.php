@@ -15,11 +15,13 @@ use LaravelJsonApi\Eloquent\Fields\Number;
 use LaravelJsonApi\Eloquent\Fields\Relations\BelongsToMany;
 use LaravelJsonApi\Eloquent\Fields\Relations\HasMany;
 use LaravelJsonApi\Eloquent\Filters\Has;
+use LaravelJsonApi\Eloquent\Filters\OnlyTrashed;
 use LaravelJsonApi\Eloquent\Filters\Where;
 use LaravelJsonApi\Eloquent\Filters\WhereDoesntHave;
 use LaravelJsonApi\Eloquent\Filters\WhereHas;
 use LaravelJsonApi\Eloquent\Filters\WhereIdIn;
 use LaravelJsonApi\Eloquent\Filters\WhereIdNotIn;
+use LaravelJsonApi\Eloquent\Filters\WithTrashed;
 use LaravelJsonApi\Eloquent\Pagination\PagePagination;
 use LaravelJsonApi\Eloquent\Schema;
 use Misaf\VendraApi\JsonApi\Sorting\RandomPositionSort;
@@ -83,6 +85,7 @@ final class ProductCategorySchema extends Schema
             ...$this->getPrimaryKeyFilters(),
             ...$this->getAttributeFilters(),
             ...$this->getRelationFilters(),
+            ...$this->getSoftDeleteFilters(),
         ];
     }
 
@@ -135,6 +138,17 @@ final class ProductCategorySchema extends Schema
             Has::make($this, 'multimedia', 'has-multimedia'),
             WhereHas::make($this, 'multimedia', 'with-multimedia'),
             WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
+        ];
+    }
+
+    /**
+     * @return array<int, Filter>
+     */
+    private function getSoftDeleteFilters(): array
+    {
+        return [
+            WithTrashed::make('with-trashed'),
+            OnlyTrashed::make('only-trashed'),
         ];
     }
 
