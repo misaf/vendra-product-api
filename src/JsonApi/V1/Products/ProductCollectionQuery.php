@@ -16,7 +16,7 @@ final class ProductCollectionQuery extends ResourceQuery
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'fields' => [
                 'nullable',
                 'array',
@@ -104,5 +104,15 @@ final class ProductCollectionQuery extends ResourceQuery
                 JsonApiRule::countable(),
             ],
         ];
+
+        if (class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+            $rules['filter.has-attribute-values'] = 'boolean';
+            $rules['filter.with-attribute-values'] = 'array';
+            $rules['filter.with-attribute-values.*'] = 'string';
+            $rules['filter.without-attribute-values'] = 'array';
+            $rules['filter.without-attribute-values.*'] = 'string';
+        }
+
+        return $rules;
     }
 }

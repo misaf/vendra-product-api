@@ -24,11 +24,19 @@ final class Server extends BaseServer
      */
     public function allSchemas(): array
     {
-        return [
+        $schemas = [
             ProductCategorySchema::class,
             ProductSchema::class,
             ProductPriceSchema::class,
             MultimediaSchema::class,
         ];
+
+        $attributeSchema = 'Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema';
+
+        if (class_exists($attributeSchema)) {
+            $schemas[] = $attributeSchema;
+        }
+
+        return $schemas;
     }
 }

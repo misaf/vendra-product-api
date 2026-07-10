@@ -26,6 +26,10 @@ Route::middleware(['api'])->group(function (): void {
                 $relations->hasOne('latestProductPrice')->readOnly();
                 $relations->hasOne('oldestProductPrice')->readOnly();
                 $relations->hasMany('multimedia')->readOnly();
+
+                if (class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+                    $relations->hasMany('attributeValues')->readOnly();
+                }
             });
 
         $server->resource('product-prices', JsonApiController::class)

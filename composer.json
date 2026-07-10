@@ -44,7 +44,8 @@
 		"pestphp/pest-plugin-laravel": "^4.0",
 		"pestphp/pest-plugin-profanity": "^4.0",
 		"pestphp/pest-plugin-type-coverage": "^4.0",
-		"phpstan/extension-installer": "^1.4"
+		"phpstan/extension-installer": "^1.4",
+		"staudenmeir/belongs-to-through": "^2.18"
 	},
 	"minimum-stability": "stable",
 	"prefer-stable": true,

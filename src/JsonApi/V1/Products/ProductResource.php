@@ -36,12 +36,18 @@ final class ProductResource extends JsonApiResource
      */
     public function relationships($request): iterable
     {
-        return [
+        $relations = [
             $this->relation('productCategory'),
             $this->relation('productPrices'),
             $this->relation('latestProductPrice'),
             $this->relation('oldestProductPrice'),
             $this->relation('multimedia'),
         ];
+
+        if (class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+            $relations[] = $this->relation('attributeValues');
+        }
+
+        return $relations;
     }
 }

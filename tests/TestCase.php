@@ -13,6 +13,7 @@ use Misaf\VendraMultimediaApi\JsonApi\V1\Server as VendraMultimediaServer;
 use Misaf\VendraMultimediaApi\Providers\MultimediaApiServiceProvider;
 use Misaf\VendraProductApi\JsonApi\V1\Server as VendraProductServer;
 use Misaf\VendraProductApi\Providers\ProductApiServiceProvider;
+use Misaf\VendraSupport\Providers\SupportServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 use Override;
 
@@ -62,6 +63,7 @@ abstract class TestCase extends OrchestraTestCase
             LaravelJsonApiEncoderServiceProvider::class,
             LaravelJsonApiServiceProvider::class,
             ApiServiceProvider::class,
+            SupportServiceProvider::class,
             MultimediaApiServiceProvider::class,
             ProductApiServiceProvider::class,
         ];

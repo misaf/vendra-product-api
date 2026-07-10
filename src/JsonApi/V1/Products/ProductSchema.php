@@ -98,6 +98,8 @@ final class ProductSchema extends Schema
 
             BelongsToMany::make('multimedia')
                 ->readOnly(),
+
+            ...$this->getAttributeValueFields(),
         ];
     }
 
@@ -212,6 +214,24 @@ final class ProductSchema extends Schema
             Has::make($this, 'multimedia', 'has-multimedia'),
             WhereHas::make($this, 'multimedia', 'with-multimedia'),
             WhereDoesntHave::make($this, 'multimedia', 'without-multimedia'),
+
+            ...$this->getAttributeValueFilters(),
+        ];
+    }
+
+    /**
+     * @return array<int, Filter>
+     */
+    private function getAttributeValueFilters(): array
+    {
+        if ( ! class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+            return [];
+        }
+
+        return [
+            Has::make($this, 'attributeValues', 'has-attribute-values'),
+            WhereHas::make($this, 'attributeValues', 'with-attribute-values'),
+            WhereDoesntHave::make($this, 'attributeValues', 'without-attribute-values'),
         ];
     }
 
@@ -227,17 +247,38 @@ final class ProductSchema extends Schema
     }
 
     /**
+     * @return array<int, Field>
+     */
+    private function getAttributeValueFields(): array
+    {
+        if ( ! class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+            return [];
+        }
+
+        return [
+            HasMany::make('attributeValues')
+                ->readOnly(),
+        ];
+    }
+
+    /**
      * @return iterable<int, string>
      */
     public function includePaths(): iterable
     {
-        return [
+        $paths = [
             'productCategory',
             'productPrices',
             'latestProductPrice',
             'oldestProductPrice',
             'multimedia',
         ];
+
+        if (class_exists('Misaf\VendraAttributeApi\JsonApi\V1\AttributeValues\AttributeValueSchema')) {
+            $paths[] = 'attributeValues';
+        }
+
+        return $paths;
     }
 
     public function pagination(): PagePagination
