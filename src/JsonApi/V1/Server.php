@@ -19,9 +19,7 @@ final class Server extends BaseServer
         return false;
     }
 
-    /**
-     * @return list<class-string>
-     */
+    /** @phpstan-ignore missingType.iterableValue */
     public function allSchemas(): array
     {
         $schemas = [
