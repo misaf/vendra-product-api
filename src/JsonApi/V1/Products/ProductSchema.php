@@ -8,7 +8,6 @@ use LaravelJsonApi\Contracts\Schema\Field;
 use LaravelJsonApi\Contracts\Schema\Filter;
 use LaravelJsonApi\Contracts\Schema\Sortable;
 use LaravelJsonApi\Eloquent\Fields\ArrayHash;
-use LaravelJsonApi\Eloquent\Fields\ArrayList;
 use LaravelJsonApi\Eloquent\Fields\Boolean;
 use LaravelJsonApi\Eloquent\Fields\DateTime;
 use LaravelJsonApi\Eloquent\Fields\ID;
@@ -51,8 +50,6 @@ final class ProductSchema extends Schema
             ArrayHash::make('name'),
 
             ArrayHash::make('description'),
-
-            ArrayList::make('specifications'),
 
             ArrayHash::make('slug'),
 

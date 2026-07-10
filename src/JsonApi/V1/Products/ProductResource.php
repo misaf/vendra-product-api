@@ -7,10 +7,7 @@ namespace Misaf\VendraProductApi\JsonApi\V1\Products;
 use LaravelJsonApi\Core\Resources\JsonApiResource;
 use Misaf\VendraProduct\Models\Product;
 
-/**
- * @mixin Product
- * @property list<array{name: string, value: string, unit?: string|null}>|null $specifications
- */
+/** @mixin Product */
 final class ProductResource extends JsonApiResource
 {
     /**
@@ -21,7 +18,6 @@ final class ProductResource extends JsonApiResource
         return [
             'name'              => $this->name,
             'description'       => $this->description,
-            'specifications'    => $this->specifications,
             'slug'              => $this->slug,
             'token'             => $this->token,
             'quantity'          => $this->quantity,
