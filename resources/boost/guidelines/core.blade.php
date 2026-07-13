@@ -4,7 +4,7 @@ The `misaf/vendra-product-api` package exposes `misaf/vendra-product` domain mod
 
 ### Standards
 
-- Keep API code inside `app-modules/vendra-product-api` using the `Misaf\VendraProductApi` namespace.
+- Keep API code inside `packages/vendra-product-api` using the `Misaf\VendraProductApi` namespace.
 - Use this package for JSON:API servers, schemas, resources, query validators, API routes, service providers, and API tests.
 - Import domain models from `Misaf\VendraProduct`; do not duplicate persistence or domain behavior in the API module.
 - Keep Filament/admin UI in `misaf/vendra-product`.

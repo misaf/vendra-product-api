@@ -1,6 +1,6 @@
 ---
 name: vendra-product-api-development
-description: "Use this skill when creating, modifying, reviewing, or testing the Vendra Product API module in app-modules/vendra-product-api, or when creating future API modules that expose domain modules through Laravel JSON:API. Trigger for JsonApi/V1 servers, schemas, resources, collection queries, resource queries, JSON:API routes, include paths, filters, pagination, sortables, API relationships, API tests, and package service provider wiring."
+description: "Use this skill when creating, modifying, reviewing, or testing the Vendra Product API module in packages/vendra-product-api, or when creating future API modules that expose domain modules through Laravel JSON:API. Trigger for JsonApi/V1 servers, schemas, resources, collection queries, resource queries, JSON:API routes, include paths, filters, pagination, sortables, API relationships, API tests, and package service provider wiring."
 ---
 
 # Vendra Product API
@@ -13,7 +13,7 @@ Before code changes, use Laravel Boost `application-info` and `search-docs` for 
 
 ## Module Boundary
 
-Treat `app-modules/vendra-product-api` as the JSON:API layer for `misaf/vendra-product`.
+Treat `packages/vendra-product-api` as the JSON:API layer for `misaf/vendra-product`.
 
 - Use namespace `Misaf\VendraProductApi`.
 - Keep API servers, schemas, API resources, query validators, routes, service providers, and API tests inside this module.
@@ -75,5 +75,5 @@ Use Pest tests to protect API contracts.
 - Add server tests when schemas, resource names, or `Server` behavior changes.
 - Add request validation tests when filters, includes, sparse fieldsets, sorting, pagination, or relationship filters change.
 - Keep Pest architecture tests in `tests/ArchTest.php`: the `php`, `security`, and `laravel` presets, plus an expectation that the module stays tenant-agnostic, e.g. `arch()->expect('Misaf\VendraProductApi')->not->toUse('Misaf\VendraTenant')`. The API module may depend on `Misaf\VendraProduct`, but not on any concrete tenant provider.
-- Run module checks from the package when possible: `composer --working-dir=app-modules/vendra-product-api test` and `composer --working-dir=app-modules/vendra-product-api analyse`.
+- Run module checks from the package when possible: `composer --working-dir=packages/vendra-product-api test` and `composer --working-dir=packages/vendra-product-api analyse`.
 - If PHP files changed, run Pint for the touched code: `vendor/bin/pint --dirty --format agent` from the host app, or the module formatter if working only inside the package.
