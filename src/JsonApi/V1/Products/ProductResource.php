@@ -6,7 +6,7 @@ namespace Misaf\VendraProductApi\JsonApi\V1\Products;
 
 use LaravelJsonApi\Core\Resources\JsonApiResource;
 use Misaf\VendraProduct\Models\Product;
-use Misaf\VendraProductApi\Support\AttributeApiIntegration;
+use Misaf\VendraSupport\Support\AttributeApiIntegration;
 
 /** @mixin Product */
 final class ProductResource extends JsonApiResource
@@ -47,6 +47,7 @@ final class ProductResource extends JsonApiResource
 
         if (AttributeApiIntegration::isAvailable()) {
             $relations[] = $this->relation('attributeValues');
+            $relations[] = $this->relation('selectedAttributeValues');
         }
 
         return $relations;

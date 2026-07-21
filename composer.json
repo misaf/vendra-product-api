@@ -28,6 +28,7 @@
         "misaf/vendra-api": "self.version",
         "misaf/vendra-multimedia-api": "self.version",
         "misaf/vendra-product": "self.version",
+        "misaf/vendra-support": "self.version",
         "spatie/laravel-package-tools": "^1.93.1"
     },
     "require-dev": {
@@ -36,6 +37,7 @@
         "laravel-json-api/testing": "^3.2",
         "laravel/boost": "^2.4.12",
         "laravel/pint": "^1.29.3",
+        "misaf/vendra-attribute": "self.version",
         "misaf/vendra-attribute-api": "self.version",
         "misaf/vendra-testing": "self.version",
         "mockery/mockery": "^1.6.12",
